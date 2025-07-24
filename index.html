@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consultoría Gratuita - Formulario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .form-container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 40px;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo img {
+      max-width: 200px;
+      height: auto;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1b2e59, #2d4a8c);
+      width: 11.11%;
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      color: #1b2e59;
+      margin-bottom: 30px;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 12px;
+      color: #1b2e59;
+      font-weight: 500;
+      font-size: 18px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+      background: white;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1b2e59;
+    }
+
+    input.error, select.error {
+      border-color: #f44336;
+    }
+
+    .error-message {
+      color: #f44336;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+
+    .checkbox-item:hover {
+      border-color: #1b2e59;
+      background: white;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: auto;
+      margin-right: 12px;
+      transform: scale(1.3);
+      accent-color: #1b2e59;
+    }
+
+    .checkbox-item.checked {
+      border-color: #1b2e59;
+      background: #f8f9ff;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+
+    .radio-item:hover {
+      border-color: #1b2e59;
+      background: white;
+    }
+
+    .radio-item input[type="radio"] {
+      width: auto;
+      margin-right: 12px;
+      transform: scale(1.3);
+      accent-color: #1b2e59;
+    }
+
+    .radio-item.checked {
+      border-color: #1b2e59;
+      background: #f8f9ff;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      gap: 15px;
+    }
+
+    button {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 120px;
+    }
+
+    .btn-primary {
+      background: #1b2e59;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2d4a8c;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #1b2e59;
+      border: 2px solid #1b2e59;
+    }
+
+    .btn-secondary:hover {
+      background: #1b2e59;
+      color: white;
+    }
+
+    .honeypot {
+      display: none;
+    }
+
+    .success-message {
+      text-align: center;
+      color: #1b2e59;
+      font-size: 18px;
+      font-weight: 500;
+      margin-top: 20px;
+      display: none;
+      padding: 30px;
+      background: #f8f9ff;
+      border-radius: 8px;
+      border: 1px solid #1b2e59;
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        padding: 20px;
+        margin: 10px;
+      }
+
+      .logo img {
+        max-width: 150px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      label {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <!-- Logo -->
+    <div class="logo">
+      <img src="https://brezanmarketing.com/wp-content/uploads/IMG_2156.png" alt="Brezan Marketing Logo">
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <form id="multiStepForm">
+      <!-- Paso 1: Años operando -->
+      <div class="step active" data-step="1">
+        <h2>¿Cuántos años lleva operando tu clínica?</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="anos-1" name="anos-operando" value="menos-1" required>
+              <label for="anos-1">Menos de 1 año</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="anos-2" name="anos-operando" value="1-3" required>
+              <label for="anos-2">1-3 años</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="anos-3" name="anos-operando" value="3-5" required>
+              <label for="anos-3">3-5 años</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="anos-4" name="anos-operando" value="mas-5" required>
+              <label for="anos-4">Más de 5 años</label>
+            </div>
+          </div>
+          <div class="error-message" id="anos-operando-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 2: Facturación -->
+      <div class="step" data-step="2">
+        <h2>Facturación mensual aproximada</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="fact-1" name="facturacion" value="menos-5000" required>
+              <label for="fact-1">Menos de 5.000€</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="fact-2" name="facturacion" value="5000-15000" required>
+              <label for="fact-2">5.000€ – 15.000€</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="fact-3" name="facturacion" value="15000-30000" required>
+              <label for="fact-3">15.000€ – 30.000€</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="fact-4" name="facturacion" value="30000-50000" required>
+              <label for="fact-4">30.000€ – 50.000€</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="fact-5" name="facturacion" value="mas-50000" required>
+              <label for="fact-5">Más de 50.000€</label>
+            </div>
+          </div>
+          <div class="error-message" id="facturacion-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 3: Servicios -->
+      <div class="step" data-step="3">
+        <h2>¿Qué servicios ofrecen actualmente?</h2>
+        <p style="color: #666; text-align: center; margin-bottom: 20px; font-size: 14px;">(Puedes seleccionar varios)</p>
+        
+        <div class="form-group">
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="serv-1" name="servicios[]" value="depilacion-laser">
+              <label for="serv-1">Depilación láser</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="serv-2" name="servicios[]" value="tratamientos-faciales">
+              <label for="serv-2">Tratamientos faciales</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="serv-3" name="servicios[]" value="tratamientos-corporales">
+              <label for="serv-3">Tratamientos corporales</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="serv-4" name="servicios[]" value="medicina-estetica">
+              <label for="serv-4">Medicina estética</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="serv-5" name="servicios[]" value="nutricion">
+              <label for="serv-5">Nutrición</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="serv-6" name="servicios[]" value="otros">
+              <label for="serv-6">Otros</label>
+            </div>
+          </div>
+          <div class="error-message" id="servicios-error">Por favor, selecciona al menos un servicio</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 4: Mayor desafío -->
+      <div class="step" data-step="4">
+        <h2>¿Cuál es tu mayor desafío para conseguir más clientes?</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="desafio-1" name="desafio" value="falta-visibilidad" required>
+              <label for="desafio-1">Falta de visibilidad online</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="desafio-2" name="desafio" value="competencia-agresiva" required>
+              <label for="desafio-2">Competencia muy agresiva</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="desafio-3" name="desafio" value="clientes-precio-bajo" required>
+              <label for="desafio-3">Clientes que buscan precio bajo</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="desafio-4" name="desafio" value="no-se-marketing" required>
+              <label for="desafio-4">No sé cómo hacer marketing</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="desafio-5" name="desafio" value="falta-tiempo" required>
+              <label for="desafio-5">Falta de tiempo para gestionarlo</label>
+            </div>
+          </div>
+          <div class="error-message" id="desafio-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 5: Experiencia marketing -->
+      <div class="step" data-step="5">
+        <h2>¿Has invertido en marketing digital antes?</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="exp-1" name="experiencia-marketing" value="nunca" required>
+              <label for="exp-1">Nunca</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="exp-2" name="experiencia-marketing" value="sin-resultados" required>
+              <label for="exp-2">Sí, pero sin resultados</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="exp-3" name="experiencia-marketing" value="resultados-moderados" required>
+              <label for="exp-3">Sí, con resultados moderados</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="exp-4" name="experiencia-marketing" value="buenos-resultados" required>
+              <label for="exp-4">Sí, con buenos resultados</label>
+            </div>
+          </div>
+          <div class="error-message" id="experiencia-marketing-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 6: Disposición a invertir -->
+      <div class="step" data-step="6">
+        <h2>Si esta estrategia funciona, ¿estarías dispuesto a invertir en marketing digital?</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="inv-1" name="inversion" value="definitivamente-si" required>
+              <label for="inv-1">Definitivamente sí</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="inv-2" name="inversion" value="probablemente-si" required>
+              <label for="inv-2">Probablemente sí</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="inv-3" name="inversion" value="necesito-ver-resultados" required>
+              <label for="inv-3">Necesitaría ver resultados primero</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="inv-4" name="inversion" value="no-seguro" required>
+              <label for="inv-4">No estoy seguro</label>
+            </div>
+          </div>
+          <div class="error-message" id="inversion-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 7: Tiempo para resultados -->
+      <div class="step" data-step="7">
+        <h2>¿Cuándo te gustaría empezar a ver resultados?</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="tiempo-1" name="tiempo-resultados" value="lo-antes-posible" required>
+              <label for="tiempo-1">Lo antes posible</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="tiempo-2" name="tiempo-resultados" value="2-4-semanas" required>
+              <label for="tiempo-2">En las próximas 2–4 semanas</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="tiempo-3" name="tiempo-resultados" value="proximo-mes" required>
+              <label for="tiempo-3">En el próximo mes</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="tiempo-4" name="tiempo-resultados" value="no-prisa" required>
+              <label for="tiempo-4">No tengo prisa</label>
+            </div>
+          </div>
+          <div class="error-message" id="tiempo-resultados-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <div></div>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 8: Horario consultoría -->
+      <div class="step" data-step="8">
+        <h2>¿Cuál es el mejor horario para tu consultoría estratégica gratuita?</h2>
+        
+        <div class="form-group">
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" id="horario-1" name="horario-consultoria" value="mananas" required>
+              <label for="horario-1">Mañanas (9:00–12:00)</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="horario-2" name="horario-consultoria" value="tardes" required>
+              <label for="horario-2">Tardes (12:00–17:00)</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="horario-3" name="horario-consultoria" value="despues-17" required>
+              <label for="horario-3">Después de las 17:00</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" id="horario-4" name="horario-consultoria" value="fines-semana" required>
+              <label for="horario-4">Fines de semana</label>
+            </div>
+          </div>
+          <div class="error-message" id="horario-consultoria-error">Por favor, selecciona una opción</div>
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+          <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+        </div>
+      </div>
+
+      <!-- Paso 9: Datos básicos (último paso) -->
+      <div class="step" data-step="9">
+        <h2>Datos básicos</h2>
+        
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input type="text" id="nombre" name="nombre" required>
+          <div class="error-message" id="nombre-error">Por favor, ingresa tu nombre</div>
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido *</label>
+          <input type="text" id="apellido" name="apellido" required>
+          <div class="error-message" id="apellido-error">Por favor, ingresa tu apellido</div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Correo electrónico de contacto *</label>
+          <input type="email" id="email" name="email" required>
+          <div class="error-message" id="email-error">Por favor, ingresa un email válido</div>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono (WhatsApp preferiblemente) *</label>
+          <input type="tel" id="telefono" name="telefono" required>
+          <div class="error-message" id="telefono-error">Por favor, ingresa tu teléfono</div>
+        </div>
+
+        <div class="form-group">
+          <label for="clinica">Nombre de la clínica *</label>
+          <input type="text" id="clinica" name="clinica" required>
+          <div class="error-message" id="clinica-error">Por favor, ingresa el nombre de la clínica</div>
+        </div>
+
+        <div class="form-group">
+          <label for="ciudad">Ciudad donde se encuentra *</label>
+          <input type="text" id="ciudad" name="ciudad" required>
+          <div class="error-message" id="ciudad-error">Por favor, ingresa la ciudad</div>
+        </div>
+
+        <!-- Honeypot -->
+        <div class="honeypot">
+          <label for="extra">Dejar en blanco</label>
+          <input type="text" id="extra" name="extra">
+        </div>
+
+        <div class="button-group">
+          <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+          <button type="submit" class="btn-primary">Enviar</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="success-message" id="successMessage">
+      <h2 style="color: #1b2e59; margin-bottom: 15px;">¡Gracias!</h2>
+      <p>Tu formulario ha sido enviado correctamente. Nos pondremos en contacto contigo pronto para agendar tu consultoría estratégica gratuita.</p>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    const steps = document.querySelectorAll('.step');
+    const progressFill = document.getElementById('progressFill');
+    const totalSteps = steps.length;
+
+    function updateProgress() {
+      const percentage = ((currentStep + 1) / totalSteps) * 100;
+      progressFill.style.width = percentage + '%';
+    }
+
+    function validateStep(stepIndex) {
+      const step = steps[stepIndex];
+      let isValid = true;
+
+      // Limpiar errores previos
+      step.querySelectorAll('.error-message').forEach(error => {
+        error.style.display = 'none';
+      });
+      step.querySelectorAll('input, select').forEach(field => {
+        field.classList.remove('error');
+      });
+
+      // Validar radio buttons
+      const radioGroups = step.querySelectorAll('input[type="radio"]');
+      if (radioGroups.length > 0) {
+        const radioNames = [...new Set([...radioGroups].map(r => r.name))];
+        radioNames.forEach(name => {
+          const radios = step.querySelectorAll(`input[name="${name}"]`);
+          const checked = [...radios].some(r => r.checked);
+          if (!checked) {
+            const errorElement = document.getElementById(name + '-error');
+            if (errorElement) {
+              errorElement.style.display = 'block';
+            }
+            isValid = false;
+          }
+        });
+      }
+
+      // Validar checkboxes (servicios)
+      const checkboxes = step.querySelectorAll('input[name="servicios[]"]');
+      if (checkboxes.length > 0) {
+        const checkedBoxes = [...checkboxes].filter(cb => cb.checked);
+        if (checkedBoxes.length === 0) {
+          document.getElementById('servicios-error').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      // Validar campos requeridos (datos básicos)
+      const requiredFields = step.querySelectorAll('input[required]:not([type="radio"]):not([type="checkbox"])');
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          field.classList.add('error');
+          const errorElement = document.getElementById(field.id + '-error');
+          if (errorElement) {
+            errorElement.style.display = 'block';
+          }
+          isValid = false;
+        }
+      });
+
+      // Validación especial de email
+      const emailField = step.querySelector('#email');
+      if (emailField && emailField.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+          emailField.classList.add('error');
+          document.getElementById('email-error').textContent = 'Por favor, ingresa un email válido';
+          document.getElementById('email-error').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      // Validación honeypot
+      const honeypot = document.getElementById('extra');
+      if (honeypot && honeypot.value) {
+        isValid = false; // Bot detectado
+      }
+
+      return isValid;
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) {
+        return;
+      }
+
+      if (currentStep < totalSteps - 1) {
+        steps[currentStep].classList.remove('active');
+        currentStep++;
+        steps[currentStep].classList.add('active');
+        updateProgress();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        steps[currentStep].classList.remove('active');
+        currentStep--;
+        steps[currentStep].classList.add('active');
+        updateProgress();
+      }
+    }
+
+    // Manejar selección de radio buttons y checkboxes
+    document.addEventListener('change', function(e) {
+      if (e.target.type === 'radio') {
+        // Remover clase checked de todos los radio items del mismo grupo
+        const groupName = e.target.name;
+        document.querySelectorAll(`input[name="${groupName}"]`).forEach(radio => {
+          radio.closest('.radio-item').classList.remove('checked');
+        });
+        // Agregar clase checked al seleccionado
+        e.target.closest('.radio-item').classList.add('checked');
+      }
+      
+      if (e.target.type === 'checkbox') {
+        // Toggle clase checked para checkboxes
+        if (e.target.checked) {
+          e.target.closest('.checkbox-item').classList.add('checked');
+        } else {
+          e.target.closest('.checkbox-item').classList.remove('checked');
+        }
+      }
+    });
+
+    // Manejar envío del formulario
+    document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (!validateStep(currentStep)) {
+        return;
+      }
+
+      // Aquí puedes agregar tu lógica de envío
+      // Ejemplo: enviar datos con fetch a tu servidor
+      
+      // Mostrar mensaje de éxito
+      document.querySelector('.form-container').innerHTML = `
+        <div class="logo">
+          <img src="https://brezanmarketing.com/wp-content/uploads/IMG_2156.png" alt="Brezan Marketing Logo">
+        </div>
+        <div class="success-message" style="display: block;">
+          <h2 style="color: #1b2e59; margin-bottom: 15px;">¡Gracias!</h2>
+          <p>Tu formulario ha sido enviado correctamente. Nos pondremos en contacto contigo pronto para agendar tu consultoría estratégica gratuita.</p>
+        </div>
+      `;
+      
+      // Para pruebas - mostrar datos en consola
+      console.log('Datos del formulario:', new FormData(this));
+    });
+
+    // Inicializar
+    updateProgress();
+
+    // Navegación con Enter
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
+        e.preventDefault();
+        if (currentStep < totalSteps - 1) {
+          nextStep();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
