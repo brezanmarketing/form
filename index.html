@@ -13,46 +13,96 @@
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f5f5f5;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-      padding: 20px;
+      padding: 10px;
+      margin: 0;
     }
 
     .form-container {
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      padding: 40px;
-      max-width: 600px;
-      margin: 0 auto;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      padding: 0;
+      max-width: 500px;
+      margin: 20px auto;
       position: relative;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1b2e59 0%, #2d4a8c 100%);
+      padding: 30px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+      50% { transform: translateX(-30%) translateY(-30%) rotate(180deg); }
     }
 
     .logo {
-      text-align: center;
-      margin-bottom: 30px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 15px;
     }
 
     .logo img {
-      max-width: 200px;
+      max-width: 180px;
       height: auto;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+    }
+
+    .logo img:hover {
+      transform: scale(1.05);
+    }
+
+    .header-title {
+      color: white;
+      font-size: 18px;
+      font-weight: 300;
+      margin: 0;
+      position: relative;
+      z-index: 2;
+      opacity: 0.9;
+    }
+
+    .form-content {
+      padding: 30px;
     }
 
     .progress-bar {
       width: 100%;
-      height: 8px;
-      background: #e0e0e0;
-      border-radius: 4px;
-      margin-bottom: 40px;
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+      margin-bottom: 20px;
       overflow: hidden;
+      position: relative;
+      z-index: 2;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #1b2e59, #2d4a8c);
+      background: linear-gradient(90deg, #ffffff, rgba(255,255,255,0.8));
       width: 11.11%;
-      transition: width 0.3s ease;
-      border-radius: 4px;
+      transition: width 0.5s ease;
+      border-radius: 3px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
 
     .step {
@@ -71,38 +121,39 @@
 
     h2 {
       color: #1b2e59;
-      margin-bottom: 30px;
-      font-size: 24px;
+      margin-bottom: 25px;
+      font-size: 22px;
       font-weight: 600;
       text-align: center;
       line-height: 1.3;
     }
 
     .form-group {
-      margin-bottom: 25px;
+      margin-bottom: 18px;
     }
 
     label {
       display: block;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       color: #1b2e59;
       font-weight: 500;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     input, select {
       width: 100%;
-      padding: 15px;
-      border: 2px solid #ddd;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
       border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.3s ease;
+      font-size: 15px;
+      transition: all 0.3s ease;
       background: white;
     }
 
     input:focus, select:focus {
       outline: none;
       border-color: #1b2e59;
+      box-shadow: 0 0 0 3px rgba(27, 46, 89, 0.1);
     }
 
     input.error, select.error {
@@ -119,15 +170,15 @@
     .checkbox-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 15px;
+      gap: 8px;
+      margin-top: 10px;
     }
 
     .checkbox-item {
       display: flex;
       align-items: center;
       cursor: pointer;
-      padding: 15px;
+      padding: 12px 15px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       transition: all 0.3s ease;
@@ -154,15 +205,15 @@
     .radio-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 15px;
+      gap: 8px;
+      margin-top: 10px;
     }
 
     .radio-item {
       display: flex;
       align-items: center;
       cursor: pointer;
-      padding: 15px;
+      padding: 12px 15px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       transition: all 0.3s ease;
@@ -189,19 +240,19 @@
     .button-group {
       display: flex;
       justify-content: space-between;
-      margin-top: 40px;
+      margin-top: 30px;
       gap: 15px;
     }
 
     button {
-      padding: 15px 30px;
+      padding: 12px 25px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
-      min-width: 120px;
+      min-width: 100px;
     }
 
     .btn-primary {
@@ -243,46 +294,71 @@
     }
 
     @media (max-width: 768px) {
+      body {
+        padding: 5px;
+      }
+
       .form-container {
-        padding: 20px;
-        margin: 10px;
+        margin: 10px auto;
+        border-radius: 15px;
+      }
+
+      .header {
+        padding: 20px 15px;
       }
 
       .logo img {
-        max-width: 150px;
+        max-width: 140px;
+      }
+
+      .header-title {
+        font-size: 16px;
+      }
+
+      .form-content {
+        padding: 20px;
       }
 
       h2 {
-        font-size: 20px;
+        font-size: 18px;
+        margin-bottom: 20px;
       }
 
       .button-group {
         flex-direction: column;
+        margin-top: 20px;
       }
 
       button {
         width: 100%;
+        padding: 12px;
       }
 
       label {
-        font-size: 16px;
+        font-size: 15px;
+      }
+
+      .radio-item, .checkbox-item {
+        padding: 10px 12px;
       }
     }
   </style>
 </head>
 <body>
   <div class="form-container">
-    <!-- Logo -->
-    <div class="logo">
-      <img src="https://brezanmarketing.com/wp-content/uploads/IMG_2156.png" alt="Brezan Marketing Logo">
+    <!-- Header con logo -->
+    <div class="header">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="logo">
+        <img src="https://brezanmarketing.com/wp-content/uploads/logo-sin-fondo.png" alt="Brezan Marketing Logo">
+      </div>
+      <h3 class="header-title">Consultoría Estratégica Gratuita</h3>
     </div>
 
-    <!-- Barra de progreso -->
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-
-    <form id="multiStepForm">
+    <div class="form-content">
+      <form id="multiStepForm">
       <!-- Paso 1: Años operando -->
       <div class="step active" data-step="1">
         <h2>¿Cuántos años lleva operando tu clínica?</h2>
@@ -551,7 +627,7 @@
         </div>
 
         <div class="button-group">
-          <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -603,15 +679,16 @@
         </div>
 
         <div class="button-group">
-          <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+          <div></div>
           <button type="submit" class="btn-primary">Enviar</button>
         </div>
       </div>
-    </form>
+      </form>
 
-    <div class="success-message" id="successMessage">
-      <h2 style="color: #1b2e59; margin-bottom: 15px;">¡Gracias!</h2>
-      <p>Tu formulario ha sido enviado correctamente. Nos pondremos en contacto contigo pronto para agendar tu consultoría estratégica gratuita.</p>
+      <div class="success-message" id="successMessage">
+        <h2 style="color: #1b2e59; margin-bottom: 15px;">¡Gracias!</h2>
+        <p>Tu formulario ha sido enviado correctamente. Nos pondremos en contacto contigo pronto para agendar tu consultoría estratégica gratuita.</p>
+      </div>
     </div>
   </div>
 
@@ -690,12 +767,6 @@
         }
       }
 
-      // Validación honeypot
-      const honeypot = document.getElementById('extra');
-      if (honeypot && honeypot.value) {
-        isValid = false; // Bot detectado
-      }
-
       return isValid;
     }
 
@@ -707,15 +778,6 @@
       if (currentStep < totalSteps - 1) {
         steps[currentStep].classList.remove('active');
         currentStep++;
-        steps[currentStep].classList.add('active');
-        updateProgress();
-      }
-    }
-
-    function prevStep() {
-      if (currentStep > 0) {
-        steps[currentStep].classList.remove('active');
-        currentStep--;
         steps[currentStep].classList.add('active');
         updateProgress();
       }
@@ -743,6 +805,30 @@
       }
     });
 
+    function showSuccessPage() {
+      document.querySelector('.form-container').innerHTML = `
+        <div class="header">
+          <div class="logo">
+            <img src="https://brezanmarketing.com/wp-content/uploads/logo-sin-fondo.png" alt="Brezan Marketing Logo">
+          </div>
+          <h3 class="header-title">¡Formulario Completado!</h3>
+        </div>
+        <div class="form-content">
+          <div class="success-message" style="display: block; text-align: center; padding: 40px 20px;">
+            <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
+            <h2 style="color: #1b2e59; margin-bottom: 25px; font-size: 24px;">¡Gracias por completar el formulario!</h2>
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 25px; color: #333;">
+              En breve analizaremos tus respuestas y te contactaremos para agendar la consultoría gratuita.
+            </p>
+            <div style="display: flex; align-items: center; justify-content: center; font-size: 14px; color: #666; background: #f8f9ff; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0;">
+              <span style="font-size: 18px; margin-right: 8px;">🕓</span>
+              <strong>Tiempo de respuesta estimado: 24h</strong>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     // Manejar envío del formulario
     document.getElementById('multiStepForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -751,36 +837,6 @@
         return;
       }
 
-      // Aquí puedes agregar tu lógica de envío
-      // Ejemplo: enviar datos con fetch a tu servidor
-      
-      // Mostrar mensaje de éxito
-      document.querySelector('.form-container').innerHTML = `
-        <div class="logo">
-          <img src="https://brezanmarketing.com/wp-content/uploads/IMG_2156.png" alt="Brezan Marketing Logo">
-        </div>
-        <div class="success-message" style="display: block;">
-          <h2 style="color: #1b2e59; margin-bottom: 15px;">¡Gracias!</h2>
-          <p>Tu formulario ha sido enviado correctamente. Nos pondremos en contacto contigo pronto para agendar tu consultoría estratégica gratuita.</p>
-        </div>
-      `;
-      
-      // Para pruebas - mostrar datos en consola
-      console.log('Datos del formulario:', new FormData(this));
-    });
-
-    // Inicializar
-    updateProgress();
-
-    // Navegación con Enter
-    document.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
-        e.preventDefault();
-        if (currentStep < totalSteps - 1) {
-          nextStep();
-        }
-      }
-    });
-  </script>
-</body>
-</html>
+      // Verificar honeypot antes de enviar
+      const honeypotField = document.getElementById('extra');
+      const isBot = honeypotField && honeypotField.value;
