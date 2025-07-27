@@ -886,39 +886,50 @@
       // Verificar honeypot
       const honeypotValue = data.extra || '';
       if (honeypotValue.trim() !== '') {
-        // Es un bot, registrar pero mostrar página de gracias
-        console.log('Bot detectado');
-        showSuccessPage();
+        // Es un bot, enviar a webhook de bots
+        data.bot_type = 'honeypot_detected';
+        data.honeypot_value = honeypotValue;
+        
+        fetch('https://webhook.brezanmarketing.com/webhook-test/d8e05271-9176-4e0b-9c9c-e13ec5163972', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        })
+        .then(() => {
+          console.log('Bot detectado y registrado');
+          showSuccessPage();
+        })
+        .catch(error => {
+          console.error('Error registrando bot:', error);
+          showSuccessPage();
+        });
         return;
       }
       
-      // Aquí puedes agregar la lógica para enviar a tu webhook
-      console.log('Datos del formulario:', data);
-      
-      // Simular envío (reemplaza con tu webhook real)
-      setTimeout(() => {
-        showSuccessPage();
-      }, 1000);
-      
-      /*
-      // Código para envío real a webhook:
-      fetch('TU_WEBHOOK_URL_AQUI', {
+      // Si es humano legítimo, enviar al webhook principal del CRM
+      fetch('https://webhook.brezanmarketing.com/webhook-test/181e16aa-c567-4288-94b7-1557c2418e5e', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Formulario enviado exitosamente:', data);
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+        return response.json().catch(() => ({})); // En caso de que no sea JSON válido
+      })
+      .then(responseData => {
+        console.log('Lead legítimo enviado al CRM:', responseData);
         showSuccessPage();
       })
       .catch(error => {
-        console.error('Error:', error);
-        showSuccessPage(); // Mostrar página de gracias aunque falle
+        console.error('Error enviando al CRM:', error);
+        showSuccessPage(); // Mostrar página de gracias aunque falle el envío
       });
-      */
     });
 
     // Inicializar
