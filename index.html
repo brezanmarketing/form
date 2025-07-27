@@ -239,7 +239,7 @@
 
     .button-group {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       margin-top: 30px;
       gap: 15px;
     }
@@ -386,7 +386,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -422,7 +421,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -463,7 +461,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -499,7 +496,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -531,7 +527,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -563,7 +558,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -595,7 +589,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -679,7 +672,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="submit" class="btn-primary">Enviar</button>
         </div>
       </div>
@@ -837,6 +829,66 @@
         return;
       }
 
-      // Verificar honeypot antes de enviar
-      const honeypotField = document.getElementById('extra');
-      const isBot = honeypotField && honeypotField.value;
+      // Preparar datos del formulario
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
+      
+      // Añadir información adicional para n8n
+      data.timestamp = new Date().toISOString();
+      data.user_agent = navigator.userAgent;
+      data.is_bot = isBot;
+      data.form_version = '1.0';
+      
+      if (isBot) {
+        // Si es bot, enviar a endpoint especial para contabilizar
+        fetch('TU_WEBHOOK_N8N_BOTS', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...data,
+            bot_type: 'honeypot_detected',
+            honeypot_value: honeypotField.value
+          })
+        })
+        .then(() => {
+          console.log('Bot detectado y registrado');
+          // Mostrar página de gracias igual (para no alertar al bot)
+          showSuccessPage();
+        })
+        .catch(error => console.error('Error registrando bot:', error));
+        return;
+      }
+      
+      // Si es humano legítimo, enviar al webhook principal
+      fetch('TU_WEBHOOK_N8N_LEADS', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Lead legítimo enviado:', data);
+        showSuccessPage();
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showSuccessPage(); // Mostrar página de gracias aunque falle el envío
+      });
+    });
+
+    // Inicializar
+    updateProgress();
+
+    // Navegación con Enter
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
+        e.preventDefault();
+        if (currentStep < totalSteps - 1) {
+          nextStep();
+        }
+      }
+    });
