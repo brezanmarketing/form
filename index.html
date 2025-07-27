@@ -883,6 +883,18 @@
       data.user_agent = navigator.userAgent;
       data.form_version = '1.0';
       
+      // Crear también un FormData para compatibilidad
+      const formDataToSend = new FormData();
+      Object.keys(data).forEach(key => {
+        if (Array.isArray(data[key])) {
+          data[key].forEach(item => formDataToSend.append(key, item));
+        } else {
+          formDataToSend.append(key, data[key]);
+        }
+      });
+      
+      console.log('Datos que se van a enviar:', data);
+      
       // Verificar honeypot
       const honeypotValue = data.extra || '';
       if (honeypotValue.trim() !== '') {
@@ -897,8 +909,12 @@
           },
           body: JSON.stringify(data)
         })
-        .then(() => {
-          console.log('Bot detectado y registrado');
+        .then(response => {
+          console.log('Respuesta bot webhook:', response.status, response.statusText);
+          return response.text();
+        })
+        .then(responseData => {
+          console.log('Bot detectado y registrado:', responseData);
           showSuccessPage();
         })
         .catch(error => {
@@ -909,6 +925,7 @@
       }
       
       // Si es humano legítimo, enviar al webhook principal del CRM
+      // Intentar primero con JSON
       fetch('https://webhook.brezanmarketing.com/webhook/5c61669b-a637-4312-b0f7-4cfce1314e3d', {
         method: 'POST',
         headers: {
@@ -917,18 +934,36 @@
         body: JSON.stringify(data)
       })
       .then(response => {
+        console.log('Respuesta CRM webhook (JSON):', response.status, response.statusText);
         if (!response.ok) {
-          throw new Error('Error en la respuesta del servidor');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json().catch(() => ({})); // En caso de que no sea JSON válido
+        return response.text();
       })
       .then(responseData => {
-        console.log('Lead legítimo enviado al CRM:', responseData);
+        console.log('Lead enviado exitosamente (JSON):', responseData);
         showSuccessPage();
       })
       .catch(error => {
-        console.error('Error enviando al CRM:', error);
-        showSuccessPage(); // Mostrar página de gracias aunque falle el envío
+        console.error('Error con JSON, intentando con FormData:', error);
+        
+        // Si falla JSON, intentar con FormData
+        fetch('https://webhook.brezanmarketing.com/webhook/5c61669b-a637-4312-b0f7-4cfce1314e3d', {
+          method: 'POST',
+          body: formDataToSend
+        })
+        .then(response => {
+          console.log('Respuesta CRM webhook (FormData):', response.status, response.statusText);
+          return response.text();
+        })
+        .then(responseData => {
+          console.log('Lead enviado exitosamente (FormData):', responseData);
+          showSuccessPage();
+        })
+        .catch(formError => {
+          console.error('Error también con FormData:', formError);
+          showSuccessPage(); // Mostrar página de gracias aunque falle
+        });
       });
     });
 
