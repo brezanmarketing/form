@@ -183,6 +183,7 @@
       border-radius: 8px;
       transition: all 0.3s ease;
       background: #f8f9fa;
+      position: relative;
     }
 
     .checkbox-item:hover {
@@ -195,6 +196,14 @@
       margin-right: 12px;
       transform: scale(1.3);
       accent-color: #1b2e59;
+      pointer-events: none;
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+      font-weight: 400;
     }
 
     .checkbox-item.checked {
@@ -218,6 +227,7 @@
       border-radius: 8px;
       transition: all 0.3s ease;
       background: #f8f9fa;
+      position: relative;
     }
 
     .radio-item:hover {
@@ -230,6 +240,14 @@
       margin-right: 12px;
       transform: scale(1.3);
       accent-color: #1b2e59;
+      pointer-events: none;
+    }
+
+    .radio-item label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+      font-weight: 400;
     }
 
     .radio-item.checked {
@@ -365,19 +383,19 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('anos-1')">
               <input type="radio" id="anos-1" name="anos-operando" value="menos-1" required>
               <label for="anos-1">Menos de 1 año</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('anos-2')">
               <input type="radio" id="anos-2" name="anos-operando" value="1-3" required>
               <label for="anos-2">1-3 años</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('anos-3')">
               <input type="radio" id="anos-3" name="anos-operando" value="3-5" required>
               <label for="anos-3">3-5 años</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('anos-4')">
               <input type="radio" id="anos-4" name="anos-operando" value="mas-5" required>
               <label for="anos-4">Más de 5 años</label>
             </div>
@@ -396,23 +414,23 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('fact-1')">
               <input type="radio" id="fact-1" name="facturacion" value="menos-5000" required>
               <label for="fact-1">Menos de 5.000€</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('fact-2')">
               <input type="radio" id="fact-2" name="facturacion" value="5000-15000" required>
               <label for="fact-2">5.000€ – 15.000€</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('fact-3')">
               <input type="radio" id="fact-3" name="facturacion" value="15000-30000" required>
               <label for="fact-3">15.000€ – 30.000€</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('fact-4')">
               <input type="radio" id="fact-4" name="facturacion" value="30000-50000" required>
               <label for="fact-4">30.000€ – 50.000€</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('fact-5')">
               <input type="radio" id="fact-5" name="facturacion" value="mas-50000" required>
               <label for="fact-5">Más de 50.000€</label>
             </div>
@@ -432,27 +450,27 @@
         
         <div class="form-group">
           <div class="checkbox-group">
-            <div class="checkbox-item">
+            <div class="checkbox-item" onclick="toggleCheckbox('serv-1')">
               <input type="checkbox" id="serv-1" name="servicios[]" value="depilacion-laser">
               <label for="serv-1">Depilación láser</label>
             </div>
-            <div class="checkbox-item">
+            <div class="checkbox-item" onclick="toggleCheckbox('serv-2')">
               <input type="checkbox" id="serv-2" name="servicios[]" value="tratamientos-faciales">
               <label for="serv-2">Tratamientos faciales</label>
             </div>
-            <div class="checkbox-item">
+            <div class="checkbox-item" onclick="toggleCheckbox('serv-3')">
               <input type="checkbox" id="serv-3" name="servicios[]" value="tratamientos-corporales">
               <label for="serv-3">Tratamientos corporales</label>
             </div>
-            <div class="checkbox-item">
+            <div class="checkbox-item" onclick="toggleCheckbox('serv-4')">
               <input type="checkbox" id="serv-4" name="servicios[]" value="medicina-estetica">
               <label for="serv-4">Medicina estética</label>
             </div>
-            <div class="checkbox-item">
+            <div class="checkbox-item" onclick="toggleCheckbox('serv-5')">
               <input type="checkbox" id="serv-5" name="servicios[]" value="nutricion">
               <label for="serv-5">Nutrición</label>
             </div>
-            <div class="checkbox-item">
+            <div class="checkbox-item" onclick="toggleCheckbox('serv-6')">
               <input type="checkbox" id="serv-6" name="servicios[]" value="otros">
               <label for="serv-6">Otros</label>
             </div>
@@ -471,23 +489,23 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('desafio-1')">
               <input type="radio" id="desafio-1" name="desafio" value="falta-visibilidad" required>
               <label for="desafio-1">Falta de visibilidad online</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('desafio-2')">
               <input type="radio" id="desafio-2" name="desafio" value="competencia-agresiva" required>
               <label for="desafio-2">Competencia muy agresiva</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('desafio-3')">
               <input type="radio" id="desafio-3" name="desafio" value="clientes-precio-bajo" required>
               <label for="desafio-3">Clientes que buscan precio bajo</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('desafio-4')">
               <input type="radio" id="desafio-4" name="desafio" value="no-se-marketing" required>
               <label for="desafio-4">No sé cómo hacer marketing</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('desafio-5')">
               <input type="radio" id="desafio-5" name="desafio" value="falta-tiempo" required>
               <label for="desafio-5">Falta de tiempo para gestionarlo</label>
             </div>
@@ -506,19 +524,19 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('exp-1')">
               <input type="radio" id="exp-1" name="experiencia-marketing" value="nunca" required>
               <label for="exp-1">Nunca</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('exp-2')">
               <input type="radio" id="exp-2" name="experiencia-marketing" value="sin-resultados" required>
               <label for="exp-2">Sí, pero sin resultados</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('exp-3')">
               <input type="radio" id="exp-3" name="experiencia-marketing" value="resultados-moderados" required>
               <label for="exp-3">Sí, con resultados moderados</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('exp-4')">
               <input type="radio" id="exp-4" name="experiencia-marketing" value="buenos-resultados" required>
               <label for="exp-4">Sí, con buenos resultados</label>
             </div>
@@ -537,19 +555,19 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('inv-1')">
               <input type="radio" id="inv-1" name="inversion" value="definitivamente-si" required>
               <label for="inv-1">Definitivamente sí</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('inv-2')">
               <input type="radio" id="inv-2" name="inversion" value="probablemente-si" required>
               <label for="inv-2">Probablemente sí</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('inv-3')">
               <input type="radio" id="inv-3" name="inversion" value="necesito-ver-resultados" required>
               <label for="inv-3">Necesitaría ver resultados primero</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('inv-4')">
               <input type="radio" id="inv-4" name="inversion" value="no-seguro" required>
               <label for="inv-4">No estoy seguro</label>
             </div>
@@ -568,19 +586,19 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('tiempo-1')">
               <input type="radio" id="tiempo-1" name="tiempo-resultados" value="lo-antes-posible" required>
               <label for="tiempo-1">Lo antes posible</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('tiempo-2')">
               <input type="radio" id="tiempo-2" name="tiempo-resultados" value="2-4-semanas" required>
               <label for="tiempo-2">En las próximas 2–4 semanas</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('tiempo-3')">
               <input type="radio" id="tiempo-3" name="tiempo-resultados" value="proximo-mes" required>
               <label for="tiempo-3">En el próximo mes</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('tiempo-4')">
               <input type="radio" id="tiempo-4" name="tiempo-resultados" value="no-prisa" required>
               <label for="tiempo-4">No tengo prisa</label>
             </div>
@@ -599,19 +617,19 @@
         
         <div class="form-group">
           <div class="radio-group">
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('horario-1')">
               <input type="radio" id="horario-1" name="horario-consultoria" value="mananas" required>
               <label for="horario-1">Mañanas (9:00–12:00)</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('horario-2')">
               <input type="radio" id="horario-2" name="horario-consultoria" value="tardes" required>
               <label for="horario-2">Tardes (12:00–17:00)</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('horario-3')">
               <input type="radio" id="horario-3" name="horario-consultoria" value="despues-17" required>
               <label for="horario-3">Después de las 17:00</label>
             </div>
-            <div class="radio-item">
+            <div class="radio-item" onclick="selectRadio('horario-4')">
               <input type="radio" id="horario-4" name="horario-consultoria" value="fines-semana" required>
               <label for="horario-4">Fines de semana</label>
             </div>
@@ -620,7 +638,6 @@
         </div>
 
         <div class="button-group">
-          <div></div>
           <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
         </div>
       </div>
@@ -689,6 +706,46 @@
     const steps = document.querySelectorAll('.step');
     const progressFill = document.getElementById('progressFill');
     const totalSteps = steps.length;
+
+    // Función para seleccionar radio buttons
+    function selectRadio(radioId) {
+      const radio = document.getElementById(radioId);
+      const radioName = radio.name;
+      
+      // Desmarcar todos los radios del mismo grupo
+      document.querySelectorAll(`input[name="${radioName}"]`).forEach(r => {
+        r.checked = false;
+        r.closest('.radio-item').classList.remove('checked');
+      });
+      
+      // Marcar el seleccionado
+      radio.checked = true;
+      radio.closest('.radio-item').classList.add('checked');
+      
+      // Limpiar error si existe
+      const errorElement = document.getElementById(radioName + '-error');
+      if (errorElement) {
+        errorElement.style.display = 'none';
+      }
+    }
+
+    // Función para toggle checkboxes
+    function toggleCheckbox(checkboxId) {
+      const checkbox = document.getElementById(checkboxId);
+      checkbox.checked = !checkbox.checked;
+      
+      if (checkbox.checked) {
+        checkbox.closest('.checkbox-item').classList.add('checked');
+      } else {
+        checkbox.closest('.checkbox-item').classList.remove('checked');
+      }
+      
+      // Limpiar error si existe
+      const serviciosError = document.getElementById('servicios-error');
+      if (serviciosError) {
+        serviciosError.style.display = 'none';
+      }
+    }
 
     function updateProgress() {
       const percentage = ((currentStep + 1) / totalSteps) * 100;
@@ -775,28 +832,6 @@
       }
     }
 
-    // Manejar selección de radio buttons y checkboxes
-    document.addEventListener('change', function(e) {
-      if (e.target.type === 'radio') {
-        // Remover clase checked de todos los radio items del mismo grupo
-        const groupName = e.target.name;
-        document.querySelectorAll(`input[name="${groupName}"]`).forEach(radio => {
-          radio.closest('.radio-item').classList.remove('checked');
-        });
-        // Agregar clase checked al seleccionado
-        e.target.closest('.radio-item').classList.add('checked');
-      }
-      
-      if (e.target.type === 'checkbox') {
-        // Toggle clase checked para checkboxes
-        if (e.target.checked) {
-          e.target.closest('.checkbox-item').classList.add('checked');
-        } else {
-          e.target.closest('.checkbox-item').classList.remove('checked');
-        }
-      }
-    });
-
     function showSuccessPage() {
       document.querySelector('.form-container').innerHTML = `
         <div class="header">
@@ -831,38 +866,43 @@
 
       // Preparar datos del formulario
       const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
+      const data = {};
       
-      // Añadir información adicional para n8n
+      // Procesar datos del formulario
+      for (let [key, value] of formData.entries()) {
+        if (key === 'servicios[]') {
+          if (!data.servicios) data.servicios = [];
+          data.servicios.push(value);
+        } else {
+          data[key] = value;
+        }
+      }
+      
+      // Añadir información adicional
       data.timestamp = new Date().toISOString();
       data.user_agent = navigator.userAgent;
-      data.is_bot = isBot;
       data.form_version = '1.0';
       
-      if (isBot) {
-        // Si es bot, enviar a endpoint especial para contabilizar
-        fetch('TU_WEBHOOK_N8N_BOTS', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...data,
-            bot_type: 'honeypot_detected',
-            honeypot_value: honeypotField.value
-          })
-        })
-        .then(() => {
-          console.log('Bot detectado y registrado');
-          // Mostrar página de gracias igual (para no alertar al bot)
-          showSuccessPage();
-        })
-        .catch(error => console.error('Error registrando bot:', error));
+      // Verificar honeypot
+      const honeypotValue = data.extra || '';
+      if (honeypotValue.trim() !== '') {
+        // Es un bot, registrar pero mostrar página de gracias
+        console.log('Bot detectado');
+        showSuccessPage();
         return;
       }
       
-      // Si es humano legítimo, enviar al webhook principal
-      fetch('TU_WEBHOOK_N8N_LEADS', {
+      // Aquí puedes agregar la lógica para enviar a tu webhook
+      console.log('Datos del formulario:', data);
+      
+      // Simular envío (reemplaza con tu webhook real)
+      setTimeout(() => {
+        showSuccessPage();
+      }, 1000);
+      
+      /*
+      // Código para envío real a webhook:
+      fetch('TU_WEBHOOK_URL_AQUI', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -871,13 +911,14 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log('Lead legítimo enviado:', data);
+        console.log('Formulario enviado exitosamente:', data);
         showSuccessPage();
       })
       .catch(error => {
         console.error('Error:', error);
-        showSuccessPage(); // Mostrar página de gracias aunque falle el envío
+        showSuccessPage(); // Mostrar página de gracias aunque falle
       });
+      */
     });
 
     // Inicializar
@@ -885,10 +926,24 @@
 
     // Navegación con Enter
     document.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
+      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT') {
         e.preventDefault();
         if (currentStep < totalSteps - 1) {
           nextStep();
         }
       }
     });
+
+    // Limpiar errores al escribir en campos de texto
+    document.addEventListener('input', function(e) {
+      if (e.target.tagName === 'INPUT' && e.target.type === 'text' || e.target.type === 'email' || e.target.type === 'tel') {
+        e.target.classList.remove('error');
+        const errorElement = document.getElementById(e.target.id + '-error');
+        if (errorElement) {
+          errorElement.style.display = 'none';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
