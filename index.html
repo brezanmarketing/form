@@ -311,6 +311,23 @@
       border: 1px solid #1b2e59;
     }
 
+    .guide-text {
+      text-align: center;
+      margin-bottom: 25px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+      border-radius: 10px;
+      border: 1px solid #e8ebf7;
+    }
+
+    .guide-text p {
+      color: #1b2e59;
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0;
+      line-height: 1.4;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 5px;
@@ -376,6 +393,11 @@
     </div>
 
     <div class="form-content">
+      <!-- Texto de guía -->
+      <div class="guide-text">
+        <p>2 minutos para obtener una estrategia personalizada gratuita que aumente tus clientes.</p>
+      </div>
+      
       <form id="multiStepForm">
       <!-- Paso 1: Años operando -->
       <div class="step active" data-step="1">
@@ -745,251 +767,3 @@
       if (serviciosError) {
         serviciosError.style.display = 'none';
       }
-    }
-
-    function updateProgress() {
-      const percentage = ((currentStep + 1) / totalSteps) * 100;
-      progressFill.style.width = percentage + '%';
-    }
-
-    function validateStep(stepIndex) {
-      const step = steps[stepIndex];
-      let isValid = true;
-
-      // Limpiar errores previos
-      step.querySelectorAll('.error-message').forEach(error => {
-        error.style.display = 'none';
-      });
-      step.querySelectorAll('input, select').forEach(field => {
-        field.classList.remove('error');
-      });
-
-      // Validar radio buttons
-      const radioGroups = step.querySelectorAll('input[type="radio"]');
-      if (radioGroups.length > 0) {
-        const radioNames = [...new Set([...radioGroups].map(r => r.name))];
-        radioNames.forEach(name => {
-          const radios = step.querySelectorAll(`input[name="${name}"]`);
-          const checked = [...radios].some(r => r.checked);
-          if (!checked) {
-            const errorElement = document.getElementById(name + '-error');
-            if (errorElement) {
-              errorElement.style.display = 'block';
-            }
-            isValid = false;
-          }
-        });
-      }
-
-      // Validar checkboxes (servicios)
-      const checkboxes = step.querySelectorAll('input[name="servicios[]"]');
-      if (checkboxes.length > 0) {
-        const checkedBoxes = [...checkboxes].filter(cb => cb.checked);
-        if (checkedBoxes.length === 0) {
-          document.getElementById('servicios-error').style.display = 'block';
-          isValid = false;
-        }
-      }
-
-      // Validar campos requeridos (datos básicos)
-      const requiredFields = step.querySelectorAll('input[required]:not([type="radio"]):not([type="checkbox"])');
-      requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-          field.classList.add('error');
-          const errorElement = document.getElementById(field.id + '-error');
-          if (errorElement) {
-            errorElement.style.display = 'block';
-          }
-          isValid = false;
-        }
-      });
-
-      // Validación especial de email
-      const emailField = step.querySelector('#email');
-      if (emailField && emailField.value) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailField.value)) {
-          emailField.classList.add('error');
-          document.getElementById('email-error').textContent = 'Por favor, ingresa un email válido';
-          document.getElementById('email-error').style.display = 'block';
-          isValid = false;
-        }
-      }
-
-      return isValid;
-    }
-
-    function nextStep() {
-      if (!validateStep(currentStep)) {
-        return;
-      }
-
-      if (currentStep < totalSteps - 1) {
-        steps[currentStep].classList.remove('active');
-        currentStep++;
-        steps[currentStep].classList.add('active');
-        updateProgress();
-      }
-    }
-
-    function showSuccessPage() {
-      document.querySelector('.form-container').innerHTML = `
-        <div class="header">
-          <div class="logo">
-            <img src="https://brezanmarketing.com/wp-content/uploads/logo-sin-fondo.png" alt="Brezan Marketing Logo">
-          </div>
-          <h3 class="header-title">¡Formulario Completado!</h3>
-        </div>
-        <div class="form-content">
-          <div class="success-message" style="display: block; text-align: center; padding: 40px 20px;">
-            <div style="font-size: 48px; margin-bottom: 20px;">✅</div>
-            <h2 style="color: #1b2e59; margin-bottom: 25px; font-size: 24px;">¡Gracias por completar el formulario!</h2>
-            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 25px; color: #333;">
-              En breve analizaremos tus respuestas y te contactaremos para agendar la consultoría gratuita.
-            </p>
-            <div style="display: flex; align-items: center; justify-content: center; font-size: 14px; color: #666; background: #f8f9ff; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0;">
-              <span style="font-size: 18px; margin-right: 8px;">🕓</span>
-              <strong>Tiempo de respuesta estimado: 24h</strong>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    // Manejar envío del formulario
-    document.getElementById('multiStepForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      if (!validateStep(currentStep)) {
-        return;
-      }
-
-      // Preparar datos del formulario
-      const formData = new FormData(this);
-      const data = {};
-      
-      // Procesar datos del formulario
-      for (let [key, value] of formData.entries()) {
-        if (key === 'servicios[]') {
-          if (!data.servicios) data.servicios = [];
-          data.servicios.push(value);
-        } else {
-          data[key] = value;
-        }
-      }
-      
-      // Añadir información adicional
-      data.timestamp = new Date().toISOString();
-      data.user_agent = navigator.userAgent;
-      data.form_version = '1.0';
-      
-      // Crear también un FormData para compatibilidad
-      const formDataToSend = new FormData();
-      Object.keys(data).forEach(key => {
-        if (Array.isArray(data[key])) {
-          data[key].forEach(item => formDataToSend.append(key, item));
-        } else {
-          formDataToSend.append(key, data[key]);
-        }
-      });
-      
-      console.log('Datos que se van a enviar:', data);
-      
-      // Verificar honeypot
-      const honeypotValue = data.extra || '';
-      if (honeypotValue.trim() !== '') {
-        // Es un bot, enviar a webhook de bots
-        data.bot_type = 'honeypot_detected';
-        data.honeypot_value = honeypotValue;
-        
-        fetch('https://webhook.brezanmarketing.com/webhook-test/d8e05271-9176-4e0b-9c9c-e13ec5163972', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => {
-          console.log('Respuesta bot webhook:', response.status, response.statusText);
-          return response.text();
-        })
-        .then(responseData => {
-          console.log('Bot detectado y registrado:', responseData);
-          showSuccessPage();
-        })
-        .catch(error => {
-          console.error('Error registrando bot:', error);
-          showSuccessPage();
-        });
-        return;
-      }
-      
-      // Si es humano legítimo, enviar al webhook principal del CRM
-      // Intentar primero con JSON
-      fetch('https://webhook.brezanmarketing.com/webhook/5c61669b-a637-4312-b0f7-4cfce1314e3d', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-      })
-      .then(response => {
-        console.log('Respuesta CRM webhook (JSON):', response.status, response.statusText);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.text();
-      })
-      .then(responseData => {
-        console.log('Lead enviado exitosamente (JSON):', responseData);
-        showSuccessPage();
-      })
-      .catch(error => {
-        console.error('Error con JSON, intentando con FormData:', error);
-        
-        // Si falla JSON, intentar con FormData
-        fetch('https://webhook.brezanmarketing.com/webhook/5c61669b-a637-4312-b0f7-4cfce1314e3d', {
-          method: 'POST',
-          body: formDataToSend
-        })
-        .then(response => {
-          console.log('Respuesta CRM webhook (FormData):', response.status, response.statusText);
-          return response.text();
-        })
-        .then(responseData => {
-          console.log('Lead enviado exitosamente (FormData):', responseData);
-          showSuccessPage();
-        })
-        .catch(formError => {
-          console.error('Error también con FormData:', formError);
-          showSuccessPage(); // Mostrar página de gracias aunque falle
-        });
-      });
-    });
-
-    // Inicializar
-    updateProgress();
-
-    // Navegación con Enter
-    document.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT') {
-        e.preventDefault();
-        if (currentStep < totalSteps - 1) {
-          nextStep();
-        }
-      }
-    });
-
-    // Limpiar errores al escribir en campos de texto
-    document.addEventListener('input', function(e) {
-      if (e.target.tagName === 'INPUT' && e.target.type === 'text' || e.target.type === 'email' || e.target.type === 'tel') {
-        e.target.classList.remove('error');
-        const errorElement = document.getElementById(e.target.id + '-error');
-        if (errorElement) {
-          errorElement.style.display = 'none';
-        }
-      }
-    });
-  </script>
-</body>
-</html>
