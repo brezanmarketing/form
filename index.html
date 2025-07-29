@@ -128,6 +128,23 @@
       line-height: 1.3;
     }
 
+    .intro-text {
+      text-align: center;
+      color: #666;
+      font-size: 15px;
+      margin-bottom: 25px;
+      line-height: 1.5;
+      background: #f8f9ff;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid #1b2e59;
+    }
+
+    .intro-text strong {
+      color: #1b2e59;
+      font-weight: 600;
+    }
+
     .form-group {
       margin-bottom: 18px;
     }
@@ -295,7 +312,16 @@
     }
 
     .honeypot {
-      display: none;
+      position: absolute !important;
+      left: -9999px !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
 
     .success-message {
@@ -309,23 +335,6 @@
       background: #f8f9ff;
       border-radius: 8px;
       border: 1px solid #1b2e59;
-    }
-
-    .guide-text {
-      text-align: center;
-      margin-bottom: 25px;
-      padding: 20px;
-      background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
-      border-radius: 10px;
-      border: 1px solid #e8ebf7;
-    }
-
-    .guide-text p {
-      color: #1b2e59;
-      font-size: 16px;
-      font-weight: 500;
-      margin: 0;
-      line-height: 1.4;
     }
 
     @media (max-width: 768px) {
@@ -357,6 +366,11 @@
       h2 {
         font-size: 18px;
         margin-bottom: 20px;
+      }
+
+      .intro-text {
+        font-size: 14px;
+        padding: 12px;
       }
 
       .button-group {
@@ -393,15 +407,14 @@
     </div>
 
     <div class="form-content">
-      <!-- Texto de guía -->
-      <div class="guide-text">
-        <p>2 minutos para obtener una estrategia personalizada gratuita que aumente tus clientes.</p>
-      </div>
-      
       <form id="multiStepForm">
       <!-- Paso 1: Años operando -->
       <div class="step active" data-step="1">
         <h2>¿Cuántos años lleva operando tu clínica?</h2>
+        
+        <div class="intro-text">
+          ⏱️ <strong>Solo 2 minutos</strong> para completar este formulario y acceder a tu <strong>consultoría estratégica GRATUITA</strong>. Te ayudaremos a conseguir más clientes para tu clínica de estética.
+        </div>
         
         <div class="form-group">
           <div class="radio-group">
@@ -668,6 +681,10 @@
       <div class="step" data-step="9">
         <h2>Datos básicos</h2>
         
+        <div class="intro-text">
+          🎯 <strong>¡Último paso!</strong> Completa tus datos para que podamos preparar tu consultoría personalizada y contactarte para agendar la sesión gratuita.
+        </div>
+        
         <div class="form-group">
           <label for="nombre">Nombre *</label>
           <input type="text" id="nombre" name="nombre" required>
@@ -704,14 +721,14 @@
           <div class="error-message" id="ciudad-error">Por favor, ingresa la ciudad</div>
         </div>
 
-        <!-- Honeypot -->
+        <!-- Honeypot oculto -->
         <div class="honeypot">
           <label for="extra">Dejar en blanco</label>
-          <input type="text" id="extra" name="extra">
+          <input type="text" id="extra" name="extra" tabindex="-1" autocomplete="off">
         </div>
 
         <div class="button-group">
-          <button type="submit" class="btn-primary">Enviar</button>
+          <button type="submit" class="btn-primary">Enviar Formulario</button>
         </div>
       </div>
       </form>
@@ -728,6 +745,12 @@
     const steps = document.querySelectorAll('.step');
     const progressFill = document.getElementById('progressFill');
     const totalSteps = steps.length;
+
+    // URLs de webhook de producción
+    const WEBHOOKS = [
+      'https://webhook.brezanmarketing.com/webhook/d8e05271-9176-4e0b-9c9c-e13ec5163972',
+      'https://webhook.brezanmarketing.com/webhook/5c61669b-a637-4312-b0f7-4cfce1314e3d'
+    ];
 
     // Función para seleccionar radio buttons
     function selectRadio(radioId) {
@@ -767,3 +790,213 @@
       if (serviciosError) {
         serviciosError.style.display = 'none';
       }
+    }
+
+    function updateProgress() {
+      const percentage = ((currentStep + 1) / totalSteps) * 100;
+      progressFill.style.width = percentage + '%';
+    }
+
+    function validateStep(stepIndex) {
+      const step = steps[stepIndex];
+      let isValid = true;
+
+      // Limpiar errores previos
+      step.querySelectorAll('.error-message').forEach(error => {
+        error.style.display = 'none';
+      });
+      step.querySelectorAll('input, select').forEach(field => {
+        field.classList.remove('error');
+      });
+
+      // Validar radio buttons
+      const radioGroups = step.querySelectorAll('input[type="radio"]');
+      if (radioGroups.length > 0) {
+        const radioNames = [...new Set([...radioGroups].map(r => r.name))];
+        radioNames.forEach(name => {
+          const radios = step.querySelectorAll(`input[name="${name}"]`);
+          const checked = [...radios].some(r => r.checked);
+          if (!checked) {
+            const errorElement = document.getElementById(name + '-error');
+            if (errorElement) {
+              errorElement.style.display = 'block';
+            }
+            isValid = false;
+          }
+        });
+      }
+
+      // Validar checkboxes (servicios)
+      const checkboxes = step.querySelectorAll('input[name="servicios[]"]');
+      if (checkboxes.length > 0) {
+        const checkedBoxes = [...checkboxes].filter(cb => cb.checked);
+        if (checkedBoxes.length === 0) {
+          document.getElementById('servicios-error').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      // Validar campos requeridos (datos básicos)
+      const requiredFields = step.querySelectorAll('input[required]:not([type="radio"]):not([type="checkbox"])');
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          field.classList.add('error');
+          const errorElement = document.getElementById(field.id + '-error');
+          if (errorElement) {
+            errorElement.style.display = 'block';
+          }
+          isValid = false;
+        }
+      });
+
+      // Validación especial de email
+      const emailField = step.querySelector('#email');
+      if (emailField && emailField.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+          emailField.classList.add('error');
+          document.getElementById('email-error').textContent = 'Por favor, ingresa un email válido';
+          document.getElementById('email-error').style.display = 'block';
+          isValid = false;
+        }
+      }
+
+      return isValid;
+    }
+
+    function nextStep() {
+      if (!validateStep(currentStep)) {
+        return;
+      }
+
+      if (currentStep < totalSteps - 1) {
+        steps[currentStep].classList.remove('active');
+        currentStep++;
+        steps[currentStep].classList.add('active');
+        updateProgress();
+      }
+    }
+
+    function redirectToThanks() {
+      // Redireccionar a la página de gracias
+      window.location.href = 'https://brezanmarketing.com/gracias/';
+    }
+
+    // Función para enviar a múltiples webhooks
+    async function sendToWebhooks(data) {
+      const promises = WEBHOOKS.map(webhook => 
+        fetch(webhook, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        }).catch(error => {
+          console.error(`Error enviando a ${webhook}:`, error);
+          return null;
+        })
+      );
+
+      try {
+        const results = await Promise.allSettled(promises);
+        console.log('Resultados de envío:', results);
+        return true;
+      } catch (error) {
+        console.error('Error en envío múltiple:', error);
+        return false;
+      }
+    }
+
+    // Manejar envío del formulario
+    document.getElementById('multiStepForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (!validateStep(currentStep)) {
+        return;
+      }
+
+      // Cambiar el botón para mostrar que se está procesando
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      // Preparar datos del formulario
+      const formData = new FormData(this);
+      const data = {};
+      
+      // Procesar datos del formulario
+      for (let [key, value] of formData.entries()) {
+        if (key === 'servicios[]') {
+          if (!data.servicios) data.servicios = [];
+          data.servicios.push(value);
+        } else {
+          data[key] = value;
+        }
+      }
+      
+      // Añadir información adicional
+      data.timestamp = new Date().toISOString();
+      data.user_agent = navigator.userAgent;
+      data.form_version = '2.0';
+      data.referrer = document.referrer;
+      
+      // Verificar honeypot
+      const honeypotValue = data.extra || '';
+      if (honeypotValue.trim() !== '') {
+        // Es un bot, redirigir a la página de gracias pero no enviar datos reales
+        console.log('Bot detectado - honeypot activado');
+        setTimeout(redirectToThanks, 1000);
+        return;
+      }
+      
+      // Eliminar honeypot de los datos finales
+      delete data.extra;
+      
+      console.log('Enviando datos del formulario:', data);
+      
+      try {
+        // Enviar a múltiples webhooks de producción
+        await sendToWebhooks(data);
+        console.log('Formulario enviado exitosamente');
+      } catch (error) {
+        console.error('Error al enviar formulario:', error);
+        // Continúar con la redirección aunque falle el envío
+      }
+
+      // Siempre redirigir a la página de gracias después de un breve delay
+      setTimeout(redirectToThanks, 1500);
+    });
+
+    // Inicializar
+    updateProgress();
+
+    // Navegación con Enter
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        if (currentStep < totalSteps - 1) {
+          nextStep();
+        }
+      }
+    });
+
+    // Limpiar errores al escribir en campos de texto
+    document.addEventListener('input', function(e) {
+      if (e.target.tagName === 'INPUT' && (e.target.type === 'text' || e.target.type === 'email' || e.target.type === 'tel')) {
+        e.target.classList.remove('error');
+        const errorElement = document.getElementById(e.target.id + '-error');
+        if (errorElement) {
+          errorElement.style.display = 'none';
+        }
+      }
+    });
+
+    // Prevenir que los bots interactúen con el honeypot
+    document.getElementById('extra').addEventListener('input', function(e) {
+      // Si algo escribe en el honeypot, es probable que sea un bot
+      console.log('Posible bot detectado - escribiendo en honeypot');
+    });
+  </script>
+</body>
+</html>
