@@ -311,7 +311,8 @@
       color: white;
     }
 
-    .honeypot {
+    /* Campos ocultos */
+    .hidden-field {
       position: absolute !important;
       left: -9999px !important;
       width: 1px !important;
@@ -322,6 +323,8 @@
       border: 0 !important;
       padding: 0 !important;
       margin: 0 !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     .success-message {
@@ -721,14 +724,19 @@
           <div class="error-message" id="ciudad-error">Por favor, ingresa la ciudad</div>
         </div>
 
-        <!-- Honeypot oculto -->
-        <div class="honeypot">
-          <label for="extra">Dejar en blanco</label>
-          <input type="text" id="extra" name="extra" tabindex="-1" autocomplete="off">
+        <!-- Campos ocultos para tracking y anti-spam -->
+        <div class="hidden-field">
+          <label for="gclid">GCLID</label>
+          <input type="text" id="gclid" name="gclid" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="hidden-field">
+          <label for="honeypot">Dejar en blanco</label>
+          <input type="text" id="honeypot" name="honeypot" tabindex="-1" autocomplete="off">
         </div>
 
         <div class="button-group">
-          <button type="submit" class="btn-primary">Enviar Formulario</button>
+          <button type="button" class="btn-primary" onclick="submitForm()">Enviar Formulario</button>
         </div>
       </div>
       </form>
@@ -746,11 +754,14 @@
     const progressFill = document.getElementById('progressFill');
     const totalSteps = steps.length;
 
-    // URLs de webhook de producción
-    const WEBHOOKS = [
-      'https://webhook.brezanmarketing.com/webhook/d8e05271-9176-4e0b-9c9c-e13ec5163972',
-      'https://webhook.brezanmarketing.com/webhook/5c61669b-a637-4312-b0f7-4cfce1314e3d'
-    ];
+    // URL de webhook CRM
+    const WEBHOOK_URL = 'https://webhook.brezanmarketing.com/webhook-test/CRM';
+
+    // Función para obtener GCLID de la URL
+    function getGCLID() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('gclid') || '';
+    }
 
     // Función para seleccionar radio buttons
     function selectRadio(radioId) {
@@ -882,94 +893,169 @@
       window.location.href = 'https://brezanmarketing.com/gracias/';
     }
 
-    // Función para enviar a múltiples webhooks
-    async function sendToWebhooks(data) {
-      const promises = WEBHOOKS.map(webhook => 
-        fetch(webhook, {
+    // Función para enviar al webhook CRM
+    async function sendToWebhook(data) {
+      try {
+        const response = await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(data)
-        }).catch(error => {
-          console.error(`Error enviando a ${webhook}:`, error);
-          return null;
-        })
-      );
+        });
 
-      try {
-        const results = await Promise.allSettled(promises);
-        console.log('Resultados de envío:', results);
-        return true;
+        if (response.ok) {
+          console.log('Formulario enviado exitosamente al CRM');
+          return true;
+        } else {
+          console.error('Error del servidor:', response.status);
+          return false;
+        }
       } catch (error) {
-        console.error('Error en envío múltiple:', error);
+        console.error('Error enviando al webhook:', error);
         return false;
       }
     }
 
-    // Manejar envío del formulario
-    document.getElementById('multiStepForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+    // Función para enviar el formulario
+    function submitForm() {
+      console.log('=== BOTÓN CLICKEADO ===');
       
-      if (!validateStep(currentStep)) {
-        return;
+      // Cambiar el botón inmediatamente
+      const submitBtn = document.querySelector('.btn-primary');
+      if (submitBtn) {
+        submitBtn.textContent = 'Enviando...';
+        submitBtn.disabled = true;
+        console.log('Botón cambiado a "Enviando..."');
       }
 
-      // Cambiar el botón para mostrar que se está procesando
-      const submitBtn = document.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Enviando...';
-      submitBtn.disabled = true;
-
-      // Preparar datos del formulario
-      const formData = new FormData(this);
-      const data = {};
+      // Validar solo campos básicos del último paso
+      const requiredFields = ['nombre', 'apellido', 'email', 'telefono', 'clinica', 'ciudad'];
+      let allValid = true;
       
-      // Procesar datos del formulario
-      for (let [key, value] of formData.entries()) {
-        if (key === 'servicios[]') {
-          if (!data.servicios) data.servicios = [];
-          data.servicios.push(value);
-        } else {
-          data[key] = value;
+      for (const fieldName of requiredFields) {
+        const field = document.getElementById(fieldName);
+        if (!field || !field.value.trim()) {
+          console.log(`Campo ${fieldName} está vacío o no existe`);
+          allValid = false;
+          if (field) {
+            field.classList.add('error');
+            const errorElement = document.getElementById(fieldName + '-error');
+            if (errorElement) errorElement.style.display = 'block';
+          }
         }
       }
-      
-      // Añadir información adicional
-      data.timestamp = new Date().toISOString();
-      data.user_agent = navigator.userAgent;
-      data.form_version = '2.0';
-      data.referrer = document.referrer;
-      
-      // Verificar honeypot
-      const honeypotValue = data.extra || '';
-      if (honeypotValue.trim() !== '') {
-        // Es un bot, redirigir a la página de gracias pero no enviar datos reales
-        console.log('Bot detectado - honeypot activado');
-        setTimeout(redirectToThanks, 1000);
+
+      // Validar email específicamente
+      const emailField = document.getElementById('email');
+      if (emailField && emailField.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+          console.log('Email inválido');
+          allValid = false;
+          emailField.classList.add('error');
+          const emailError = document.getElementById('email-error');
+          if (emailError) {
+            emailError.textContent = 'Por favor, ingresa un email válido';
+            emailError.style.display = 'block';
+          }
+        }
+      }
+
+      if (!allValid) {
+        console.log('Validación falló - restaurando botón');
+        if (submitBtn) {
+          submitBtn.textContent = 'Enviar Formulario';
+          submitBtn.disabled = false;
+        }
         return;
       }
-      
-      // Eliminar honeypot de los datos finales
-      delete data.extra;
-      
-      console.log('Enviando datos del formulario:', data);
-      
-      try {
-        // Enviar a múltiples webhooks de producción
-        await sendToWebhooks(data);
-        console.log('Formulario enviado exitosamente');
-      } catch (error) {
-        console.error('Error al enviar formulario:', error);
-        // Continúar con la redirección aunque falle el envío
+
+      console.log('Validación exitosa - preparando datos');
+
+      // Recopilar datos del formulario manualmente
+      const data = {
+        // Datos básicos
+        nombre: document.getElementById('nombre').value.trim(),
+        apellido: document.getElementById('apellido').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        clinica: document.getElementById('clinica').value.trim(),
+        ciudad: document.getElementById('ciudad').value.trim(),
+        
+        // Datos de pasos anteriores
+        'anos-operando': document.querySelector('input[name="anos-operando"]:checked')?.value || '',
+        facturacion: document.querySelector('input[name="facturacion"]:checked')?.value || '',
+        desafio: document.querySelector('input[name="desafio"]:checked')?.value || '',
+        'experiencia-marketing': document.querySelector('input[name="experiencia-marketing"]:checked')?.value || '',
+        inversion: document.querySelector('input[name="inversion"]:checked')?.value || '',
+        'tiempo-resultados': document.querySelector('input[name="tiempo-resultados"]:checked')?.value || '',
+        'horario-consultoria': document.querySelector('input[name="horario-consultoria"]:checked')?.value || '',
+        
+        // Servicios (checkboxes)
+        servicios: Array.from(document.querySelectorAll('input[name="servicios[]"]:checked')).map(cb => cb.value),
+        
+        // Tracking
+        timestamp: new Date().toISOString(),
+        user_agent: navigator.userAgent,
+        form_version: '3.2',
+        referrer: document.referrer,
+        page_url: window.location.href
+      };
+
+      // GCLID si está presente
+      const gclid = getGCLID();
+      if (gclid) {
+        data.gclid = gclid;
       }
 
-      // Siempre redirigir a la página de gracias después de un breve delay
-      setTimeout(redirectToThanks, 1500);
+      // Verificar honeypot
+      const honeypot = document.getElementById('honeypot');
+      if (honeypot && honeypot.value.trim() !== '') {
+        console.log('Bot detectado - honeypot activado');
+        window.location.href = 'https://brezanmarketing.com/gracias/';
+        return;
+      }
+
+      console.log('Datos recopilados:', data);
+
+      // Enviar al webhook (sin await)
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      }).then(response => {
+        console.log('Respuesta webhook:', response.status);
+      }).catch(error => {
+        console.log('Error webhook:', error);
+      });
+
+      // Redirigir inmediatamente
+      console.log('Redirigiendo a página de gracias...');
+      window.location.href = 'https://brezanmarketing.com/gracias/';
+    }
+
+    // Manejar envío del formulario (mantener como backup)
+    document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      console.log('Submit event triggered');
+      submitForm();
     });
 
-    // Inicializar
-    updateProgress();
+    // Inicializar formulario
+    document.addEventListener('DOMContentLoaded', function() {
+      // Capturar GCLID al cargar la página
+      const gclid = getGCLID();
+      if (gclid) {
+        document.getElementById('gclid').value = gclid;
+        console.log('GCLID capturado:', gclid);
+      }
+      
+      // Inicializar barra de progreso
+      updateProgress();
+    });
 
     // Navegación con Enter
     document.addEventListener('keypress', function(e) {
@@ -992,10 +1078,13 @@
       }
     });
 
-    // Prevenir que los bots interactúen con el honeypot
-    document.getElementById('extra').addEventListener('input', function(e) {
-      // Si algo escribe en el honeypot, es probable que sea un bot
+    // Prevenir que los bots interactúen con los campos ocultos
+    document.getElementById('honeypot').addEventListener('input', function(e) {
       console.log('Posible bot detectado - escribiendo en honeypot');
+    });
+
+    document.getElementById('gclid').addEventListener('input', function(e) {
+      console.log('Modificación manual del GCLID detectada');
     });
   </script>
 </body>
